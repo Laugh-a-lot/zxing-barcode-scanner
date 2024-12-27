@@ -37,26 +37,23 @@ const BarcodeScanner = () => {
       await readerRef.current.decodeFromConstraints(
         {
           video: {
-            facingMode: "environment",
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1920 }, // Higher resolution for better accuracy
+            height: { ideal: 1080 },
+            focusMode: "continuous", // Enable continuous autofocus
           },
         },
         videoRef.current,
         (result, err) => {
-          // Only handle successful scans and unexpected errors
           if (result) {
             const text = result.getText();
             setResult(text);
-            // Stop scanning after successful detection
             stopScanning();
-            // Play success sound
             const beep = new Audio(
               "data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLXrO8tiJNwgZXrfz552mNwcFS6fo9blRMAcAOZHe+OTDXywHAChwx/Hp2pg9BwAZVrDt+OzihEYIABA+nOv89/bGXg8AACtiwfL//fzWdxkAAB1NqPH////vkysAABQ4lun4///+8l4IAAo2meX2/v/+/n4VBwAhQaLZ/f7+/v+hMwsADiuR3vb//f7+/v+QPw8AFDmW2ff//v3///+uTRIAAyN/0vX//v7////GXxkA"
             );
             beep.play().catch(() => {});
           } else if (err && !(err instanceof NotFoundException)) {
-            // Only log non-NotFoundException errors
             console.error("Unexpected scanning error:", err);
             setError("An unexpected error occurred while scanning");
             stopScanning();
